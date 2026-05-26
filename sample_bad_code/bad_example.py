@@ -4,8 +4,10 @@ bad_example.py
 Intentionally flawed Python file used to test the AI Code Reviewer pipeline.
 
 Submit this file in a pull request to verify that the reviewer catches real
-issues.  Every problem here is deliberate — do not fix them manually before
+issues. Every problem here is deliberate — do not fix them manually before
 running the reviewer.
+
+Triggering real-time AI code review run.
 """
 
 import os
