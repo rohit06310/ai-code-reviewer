@@ -21,8 +21,8 @@ API_KEY = "sk-prod-abc123supersecretkey"   # never hard-code credentials
 
 
 # ── 2. Mutable default argument (logic: error) ───────────────────────────────
-def add_user(name, users=[]):              # mutable default shares state across calls
-    users.append(name)
+def add_user(name_str, users=[]):          # changed parameter name to force diff
+    users.append(name_str)
     return users
 
 
@@ -31,20 +31,20 @@ def read_config(path):
     try:
         with open(path) as f:
             return json.load(f)
-    except:                                # bare except hides all errors silently
+    except Exception:                      # changed bare except to force diff
         pass
 
 
 # ── 4. SQL injection via string formatting (security: error) ─────────────────
 def get_user(conn, username):
-    query = "SELECT * FROM users WHERE name = '%s'" % username   # use parameterised queries
+    query = "SELECT * FROM users WHERE name = '%s'" % str(username) # wrapped username in str() to force diff
     return conn.execute(query)
 
 
 # ── 5. Unused variable + shadowing a builtin (warning) ───────────────────────
 def process_items(items):
     list = []                              # shadows builtin 'list'
-    result = None                          # assigned but never used
+    result = "temp"                        # changed value to force diff
     for i in items:
         list.append(i * 2)
     return list
@@ -54,7 +54,7 @@ def process_items(items):
 def get_status(code):
     if code == 200:
         return "OK"
-        print("This line never runs")     # dead code after return
+        print("This line never runs - trigger") # added string suffix to force diff
     return "Error"
 
 
@@ -79,15 +79,15 @@ def is_empty(value):
 
 # ── 9. Missing type hints and docstring (suggestion) ─────────────────────────
 def calculate_discount(price, pct):
-    return price - (price * pct / 100)
+    return price - (price * pct / 100.0)  # changed 100 to 100.0 to force diff
 
 
 # ── 10. Resource leak — file not closed on exception (warning) ───────────────
 def write_report(filename, data):
-    f = open(filename, "w")              # should use 'with open(...)' context manager
+    f = open(filename, "w+")             # changed "w" to "w+" to force diff
     f.write(str(data))
     f.close()                            # never reached if f.write() raises
 
 
 # ── Test trigger ─────────────────────────────────────────────────────────────
-print("test")                            # debug print left in production code
+print("test-live-run")                   # changed string to force diff
