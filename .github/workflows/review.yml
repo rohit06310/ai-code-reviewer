@@ -1,0 +1,53 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    name: Review PR diff with AI
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Needed to read the diff and post comments on the PR.
+      pull-requests: write
+      contents: read
+
+    steps:
+      # ── 1. Check out the repository ─────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Python ────────────────────────────────────────────────────
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # ── 3. Install dependencies ─────────────────────────────────────────────
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # ── 4. Run the AI Code Reviewer ─────────────────────────────────────────
+      - name: Run AI Code Reviewer
+        env:
+          # GitHub context — automatically provided by Actions.
+          GITHUB_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER:         ${{ github.event.pull_request.number }}
+
+          # AI provider — set to "openrouter", "claude", or "openai".
+          AI_PROVIDER: openrouter
+
+          # Provider API keys — add these in your repo's Settings → Secrets.
+          # Only the key matching AI_PROVIDER above is required.
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY:     ${{ secrets.OPENAI_API_KEY }}
+
+          # Optional tuning (these match the defaults in config.py).
+          # MAX_CHUNK_CHARS: 3000
+          # MAX_TOKENS: 1000
+
+        run: python main.py

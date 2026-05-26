@@ -1,0 +1,9 @@
+# The only third-party dependencies this project needs.
+# Everything else (urllib, json, os, re) is Python stdlib.
+
+# Anthropic SDK — required when AI_PROVIDER=claude
+anthropic>=0.25.0
+
+# OpenAI SDK — required when AI_PROVIDER=openai or AI_PROVIDER=openrouter
+# (OpenRouter uses the OpenAI-compatible API with a custom base_url)
+openai>=1.25.0
