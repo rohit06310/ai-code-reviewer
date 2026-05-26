@@ -85,3 +85,7 @@ def write_report(filename, data):
     f = open(filename, "w")              # should use 'with open(...)' context manager
     f.write(str(data))
     f.close()                            # never reached if f.write() raises
+
+
+# ── Test trigger ─────────────────────────────────────────────────────────────
+print("test")                            # debug print left in production code
